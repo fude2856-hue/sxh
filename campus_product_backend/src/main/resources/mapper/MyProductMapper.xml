@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉MyProductMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.MyProductMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="productResultMap" type="Product">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="detail" property="detail" jdbcType="LONGVARCHAR"/>
+        <result column="cover_list" property="cover_list" jdbcType="LONGVARCHAR"/>
+        <result column="old_level" property="old_level" jdbcType="BIGINT"/>
+        <result column="category_id" property="category_id" jdbcType="BIGINT"/>
+        <result column="user_id" property="user_id" jdbcType="BIGINT"/>
+        <result column="inventory" property="inventory" jdbcType="BIGINT"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+
+    </resultMap>
+    <!-- 分页加条件模糊查询我的商品 -->
+    <select id="getMyProductsByPage" resultType="Product">
+        SELECT * FROM product
+        WHERE user_id = #{userId} and inventory>0
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <!-- 使用 pageSize 参数而不是 limit -->
+        LIMIT #{offset}, #{pageSize}
+    </select>
+    <!-- 查询符合条件的商品总数 -->
+    <select id="getMyProductsTotal" resultType="int">
+        SELECT COUNT(*) FROM product
+        WHERE user_id = #{userId} and inventory>0
+        <if test="keyword != null and keyword != ''">
+            AND (name LIKE CONCAT('%', #{keyword}, '%') OR detail LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+    </select>
+    <!-- 修改我的商品 -->
+    <update id="updateMyProduct" parameterType="Product">
+        UPDATE product
+        SET name = #{name}, detail = #{detail}, cover_list = #{cover_list}, old_level = #{old_level}, category_id = #{category_id}, inventory = #{inventory}, price = #{price}
+        WHERE id = #{id}
+    </update>
+    <!-- 删除我的商品 -->
+    <update id="deleteById" parameterType="java.lang.String">
+        update product set inventory = 0 where id = #{productId}
+    </update>
+    <delete id="deleteByIds" parameterType="java.util.List">
+        update product set inventory = 0 where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

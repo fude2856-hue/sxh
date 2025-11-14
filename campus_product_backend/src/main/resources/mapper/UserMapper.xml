@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉UserMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.UserMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="userResultMap" type="User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+        <result column="role" property="role" jdbcType="BIGINT"/>
+        <result column="account_status" property="account_status" jdbcType="BIGINT"/>
+    </resultMap>
+    <insert id="insertUser" parameterType="User">
+        insert into user (username, password, phone,create_time,role,account_status)
+        values (#{username}, #{password}, #{phone},#{create_time},#{role},#{account_status})
+    </insert>
+    <select id="findByUsername" resultMap="userResultMap">
+        select * from user where username = #{username}
+    </select>
+    <select id="findByPhone" resultMap="userResultMap">
+        select * from user where phone = #{phone}
+    </select>
+    <select id="login" resultMap="userResultMap">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+    <select id="findById" resultMap="userResultMap">
+        select * from user where id = #{id}
+    </select>
+    <update id="updateUser" parameterType="User">
+        update user
+        set username = #{username} ,password = #{password}, phone = #{phone},create_time = #{create_time}
+        where id = #{id}
+    </update>
+    <!-- 逻辑删除：根据用户 ID 设置账号状态为 2 -->
+    <update id="setUserAccountStatusById">
+        update user set account_status = '2' where id = #{id}
+    </update>
+    <select id="findUserByUsername" resultType="com.dz.campus_product_backend.entity.User">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <select id="findUserByPhone" resultType="com.dz.campus_product_backend.entity.User">
+        SELECT * FROM user WHERE phone = #{phone}
+    </select>
+    <select id="findAll" resultMap="userResultMap">
+        SELECT * FROM user WHERE account_status = '1'
+    </select>
+</mapper>

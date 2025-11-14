@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉OrdersMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.OrdersMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="ordersResultMap" type="Orders">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="user_id" jdbcType="BIGINT"/>
+        <result column="product_id" property="product_id" jdbcType="BIGINT"/>
+        <result column="trade_time" property="trade_time" jdbcType="TIMESTAMP"/>
+        <result column="buy_price" property="buy_price" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getOrdersByPage" resultType="com.dz.campus_product_backend.entity.Orders">
+        SELECT * FROM orders
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (id LIKE CONCAT('%', #{keyword}, '%') OR product_id LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getTotalCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM orders
+        <if test="keyword!= null and keyword!= ''">
+            WHERE (product_id LIKE CONCAT('%', #{keyword}, '%') OR buy_price LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+    </select>
+    <insert id="insertOrders" parameterType="com.dz.campus_product_backend.entity.Orders">
+        insert into orders (product_id, user_id, trade_time, buy_price)
+        values (#{product_id}, #{user_id}, #{trade_time}, #{buy_price})
+    </insert>
+    <update id="updateOrdersById" parameterType="Orders">
+        update orders
+        <set>
+            <if test="user_id!= null">
+                user_id = #{user_id},
+            </if>
+            <if test="product_id!= null">
+                product_id = #{product_id},
+            </if>
+            <if test="trade_time!= null">
+                trade_time = #{trade_time},
+            </if>
+            <if test="buy_price!= null">
+                buy_price = #{buy_price},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <delete id="deleteOrdersById" parameterType="java.lang.String">
+        delete from orders where id = #{id}
+    </delete>
+    <delete id="deleteOrdersByIds" parameterType="java.util.List">
+        delete from orders where id in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

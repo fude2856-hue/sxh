@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉UserMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.LogMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="logResultMap" type="OperationLog">
+<!--        <id column="id" property="id" jdbcType="BIGINT"/>-->
+<!--        <result column="username" property="username" jdbcType="VARCHAR"/>-->
+<!--        <result column="password" property="password" jdbcType="VARCHAR"/>-->
+<!--        <result column="phone" property="phone" jdbcType="VARCHAR"/>-->
+<!--        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>-->
+    </resultMap>
+    <insert id="insert" parameterType="OperationLog">
+        insert into operation_log (user_id,detail,create_time)
+        values (#{user_id},#{detail},#{create_time})
+    </insert>
+
+    <select id="selectAllLogs" resultMap="logResultMap">
+        SELECT * FROM operation_log ORDER BY create_time DESC
+    </select>
+</mapper>

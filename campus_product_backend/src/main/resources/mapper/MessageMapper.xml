@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dz.campus_product_backend.dao.MessageMapper">
+    <insert id="addMessage" parameterType="Message">
+        insert into message (receive_user_id,content,is_read,create_time,send_user_id)
+        values (#{receive_user_id}, #{content}, #{is_read}, #{create_time}, #{send_user_id})
+    </insert>
+    <select id="getEvaluationMessages" resultType="Evaluation">
+        select e.user_id,
+               e.content,
+               e.create_time
+        from evaluation e
+        join product p on e.product_id=p.id
+        where p.user_id=#{user_id}
+        order by e.create_time desc
+    </select>
+    <select id="getOrdersMessages" resultType="Orders">
+        select o.user_id,
+               o.product_id,
+               o.trade_time
+        from orders o
+        join product p on o.product_id=p.id
+        where p.user_id=#{user_id}
+        order by o.trade_time desc
+    </select>
+    <select id="selectInteractions" resultType="Interaction">
+        select i.user_id,
+               i.product_id,
+               i.datetime
+        from interaction i
+        join product p on i.product_id=p.id
+        where p.user_id=#{user_id}
+        order by i.datetime desc
+    </select>
+    <select id="selectReplyMessages" resultType="Message">
+        select send_user_id,content,create_time
+        from message
+        where send_user_id=#{sendUserId}
+        order by create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉UserMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.ProductMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="productResultMap" type="Product">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="detail" property="detail" jdbcType="LONGVARCHAR"/>
+        <result column="cover_list" property="cover_list" jdbcType="LONGVARCHAR"/>
+        <result column="old_level" property="old_level" jdbcType="BIGINT"/>
+        <result column="category_id" property="category_id" jdbcType="BIGINT"/>
+        <result column="user_id" property="user_id" jdbcType="BIGINT"/>
+        <result column="inventory" property="inventory" jdbcType="BIGINT"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="is_bargain" property="is_bargain" jdbcType="TINYINT"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+
+    </resultMap>
+    <insert id="insertProduct" parameterType="Product">
+        insert into product (name, detail,cover_list,old_level,category_id,user_id,inventory,price,create_time)
+        values (#{name}, #{detail}, #{cover_list}, #{old_level}, #{category_id}, #{user_id}, #{inventory}, #{price}, #{create_time})
+    </insert>
+    <select id="selectByCategoryId" resultMap="productResultMap">
+        select * from product where category_id = #{category_id} and inventory > 0
+    </select>
+<!--    分页功能-->
+    <select id="selectAllProducts" resultMap="productResultMap">
+        select * from product where inventory > 0
+    </select>
+    <select id="selectByProductName" resultMap="productResultMap">
+        select * from product where name like CONCAT('%', #{name}, '%') and inventory > 0
+    </select>
+    <select id="selectByProductId" resultMap="productResultMap">
+        select * from product where id = #{id} and inventory > 0
+    </select>
+    <delete id="deleteByProductId">
+        delete from product where id = #{id}
+    </delete>
+    <update id="updateStock">
+        update product set inventory = inventory - 1 where id = #{productId}
+    </update>
+    <select id="findAll" resultMap="productResultMap">
+        SELECT * FROM product where inventory > 0
+    </select>
+
+    <!-- 根据商品 ID 查询商品 -->
+    <select id="findByProductId" resultMap="productResultMap">
+        SELECT * FROM product WHERE id = #{productId} and inventory > 0
+    </select>
+
+    <!-- 根据商品名称查询商品 -->
+    <select id="findByProductName" resultMap="productResultMap">
+        SELECT * FROM product WHERE name = #{productName} and inventory > 0
+    </select>
+
+    <!-- 根据商品 ID 删除商品 -->
+    <update id="deleteProductById">
+        update product set inventory = 0 where id = #{productId}
+    </update>
+
+    <!-- 根据商品名称删除商品 -->
+    <delete id="deleteProductByName">
+        DELETE FROM product WHERE name = #{productName}
+    </delete>
+</mapper>

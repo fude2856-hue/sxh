@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dz.campus_product_backend.dao.EvaluationMapper">
+    <resultMap id="evaluationResultMap" type="Evaluation">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="user_id" jdbcType="BIGINT"/>
+        <result column="product_id" property="product_id" jdbcType="BIGINT"/>
+        <result column="score" property="score" jdbcType="BIGINT"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="findAllByUserId" resultMap="evaluationResultMap">
+        select * from evaluation where user_id=#{user_id}
+        ORDER BY create_time DESC
+    </select>
+    <select id="findByProductId" resultMap="evaluationResultMap">
+        select e.id as id,p.id as product_id,u.id as user_id,e.content,e.score,e.create_time as create_time
+        from evaluation e
+        join product p on e.product_id=p.id
+        join user u on e.user_id=u.id
+        where p.user_id=#{sellerId}
+    </select>
+    <delete id="delete" >
+        delete from evaluation
+        where id=#{id} and user_id=#{user_id}
+    </delete>
+
+    <!-- 查询所有评论 -->
+    <select id="findAll" resultType="com.dz.campus_product_backend.entity.Evaluation">
+        SELECT * FROM evaluation
+    </select>
+
+    <!-- 根据评论ID查询 -->
+    <select id="findById" parameterType="string" resultType="com.dz.campus_product_backend.entity.Evaluation">
+        SELECT * FROM evaluation WHERE id = #{evaluationId}
+    </select>
+
+    <!-- 根据用户ID查询 -->
+    <select id="findByUserId" parameterType="string" resultType="com.dz.campus_product_backend.entity.Evaluation">
+        SELECT * FROM evaluation WHERE user_id = #{userId}
+    </select>
+
+    <!-- 根据商品ID查询 -->
+    <select id="findByProductId1" parameterType="string" resultType="com.dz.campus_product_backend.entity.Evaluation">
+        SELECT * FROM evaluation WHERE product_id = #{productId}
+    </select>
+
+    <!-- 根据评论ID删除 -->
+    <delete id="deleteEvaluationById" parameterType="string">
+        DELETE FROM evaluation WHERE id = #{evaluationId}
+    </delete>
+
+
+    <!-- 根据用户ID删除 -->
+    <delete id="deleteByUserId" parameterType="string">
+        DELETE FROM evaluation WHERE user_id = #{userId}
+    </delete>
+
+    <!-- 根据商品ID删除 -->
+    <delete id="deleteByProductId" parameterType="string">
+        DELETE FROM evaluation WHERE product_id = #{productId}
+    </delete>
+</mapper>

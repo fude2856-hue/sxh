@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--告诉UserMapper为哪个接口文件提供服务-->
+<mapper namespace="com.dz.campus_product_backend.dao.InteractionMapper">
+    <!--实体类中的名称和数据库中的名称不匹配时需要映射-->
+    <resultMap id="interactionResultMap" type="Interaction">
+<!--        <id column="id" property="id" jdbcType="BIGINT"/>-->
+<!--        <result column="username" property="username" jdbcType="VARCHAR"/>-->
+<!--        <result column="password" property="password" jdbcType="VARCHAR"/>-->
+<!--        <result column="phone" property="phone" jdbcType="VARCHAR"/>-->
+<!--        <result column="create_time" property="create_time" jdbcType="TIMESTAMP"/>-->
+    </resultMap>
+    <insert id="insert" parameterType="Interaction">
+        insert into interaction (user_id,product_id,datetime)
+        values (#{user_id},#{product_id},#{datetime})
+    </insert>
+    <delete id="delete">
+        delete from interaction where user_id=#{user_id} and product_id=#{product_id}
+    </delete>
+    <select id="findByUserIdAndProductId" resultMap="interactionResultMap">
+        select * from interaction where user_id=#{user_id} and product_id=#{product_id}
+    </select>
+
+    <insert id="insertInteraction" parameterType="Interaction">
+        insert into interaction (user_id, product_id,datetime)
+        values (#{user_id}, #{product_id}, #{datetime})
+    </insert>
+
+
+
+    <update id="updateInteractionById" parameterType="Interaction">
+        update interaction
+        <set>
+            <if test="user_id!= null">
+                user_id = #{user_id},
+            </if>
+            <if test="product_id!= null">
+                product_id = #{product_id},
+            </if>
+            <if test="datetime!= null">
+                datetime = #{datetime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getInteractionsByPage" resultType="com.dz.campus_product_backend.entity.Interaction">
+        SELECT * FROM interaction
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (user_id LIKE CONCAT('%', #{keyword}, '%') OR product_id LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*) FROM interaction
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (user_id LIKE CONCAT('%', #{keyword}, '%') OR product_id LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+</mapper>

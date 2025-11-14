@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dz.campus_product_backend.dao.FeedbackMapper">
+    <select id="selectAllFeedback" resultType="Message">
+        SELECT
+        id,
+        send_user_id ,
+        content,
+        create_time
+        FROM message
+        WHERE receive_user_id = #{receive_user_id}
+        ORDER BY create_time DESC
+    </select>
+    <insert id="addReply" parameterType="Message">
+        insert into message (receive_user_id,content,is_read,create_time,send_user_id)
+        values (#{receive_user_id}, #{content}, #{is_read}, #{create_time}, #{send_user_id})
+    </insert>
+    <select id="selectFeedbackByUserId" resultType="Message">
+        select * from message where id=#{feedbackId}
+    </select>
+</mapper>
